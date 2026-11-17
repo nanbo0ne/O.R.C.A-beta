@@ -135,10 +135,7 @@ func TestWindowsPackagingPrepOnlySkipsApplicationBuild(t *testing.T) {
 }
 
 func TestWindowsPackagingCreatesFreshPayloadParent(t *testing.T) {
-	bash, err := exec.LookPath("bash")
-	if err != nil {
-		t.Skip("bash is not installed")
-	}
+	bash := requireNativeBash(t)
 	body, err := os.ReadFile("../scripts/desktop-build.sh")
 	if err != nil {
 		t.Fatal(err)

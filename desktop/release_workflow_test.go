@@ -12,10 +12,7 @@ import (
 )
 
 func TestReleaseChecksumsCoverPayloadAndExcludeManifest(t *testing.T) {
-	bash, err := exec.LookPath("bash")
-	if err != nil {
-		t.Skip("bash is required for the release script")
-	}
+	bash := requireNativeBash(t)
 	dir := t.TempDir()
 	want := ""
 	for _, name := range []string{"Orca installer.exe", "Orca.zip"} {
