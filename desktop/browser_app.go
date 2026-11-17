@@ -1099,7 +1099,7 @@ func (s *browserService) shutdown() {
 }
 
 func (a *App) initBrowser() {
-	if !browserPreviewEnabled() {
+	if !browserControlEnabled() {
 		return
 	}
 	var s *browserService
@@ -1116,7 +1116,7 @@ func (a *App) initBrowser() {
 	a.browser = s
 }
 func (a *App) browserOwner(owner string) (*browserService, error) {
-	if !browserPreviewEnabled() {
+	if !browserControlEnabled() {
 		return nil, browserhost.ErrUnsupported
 	}
 	a.mu.RLock()
@@ -1137,7 +1137,7 @@ func (a *App) browserOwner(owner string) (*browserService, error) {
 	return a.browser, nil
 }
 func (a *App) BrowserAvailable() bool {
-	return browserPreviewEnabled() && runtime.GOOS == "windows" && a.browser != nil
+	return browserControlEnabled() && runtime.GOOS == "windows" && a.browser != nil
 }
 func (a *App) GetBrowserState(ownerTabID string) BrowserState {
 	s, err := a.browserOwner(ownerTabID)

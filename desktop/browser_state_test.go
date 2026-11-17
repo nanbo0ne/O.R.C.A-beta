@@ -34,7 +34,7 @@ func TestBrowserStateJSONCollectionsAlwaysArrays(t *testing.T) {
 	s.onEvent(browserhost.Event{TabID: id, Kind: "upload", Upload: &browserhost.Upload{ID: "u", TabID: id, Status: "pending"}})
 	states["populated-transfers"] = s.state("owner")
 	channel = "stable"
-	states["preview-disabled"] = a.GetBrowserState("owner")
+	states["official-unregistered"] = a.GetBrowserState("owner")
 	for name, state := range states {
 		t.Run(name, func(t *testing.T) {
 			data, err := json.Marshal(state)

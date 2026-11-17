@@ -411,16 +411,16 @@ func TestBrowserConcurrentStateCommandsEvents(t *testing.T) {
 	}
 	wg.Wait()
 }
-func TestBrowserReleaseChannelDisabled(t *testing.T) {
+func TestBrowserReleaseChannelEnabled(t *testing.T) {
 	old := channel
 	channel = "stable"
 	defer func() { channel = old }()
 	a := &App{}
 	a.initBrowser()
-	if a.browser != nil || len(a.browserTools("owner")) != 0 {
-		t.Fatal("browser enabled in release")
+	if a.browser == nil || len(a.browserTools("owner")) != 3 {
+		t.Fatalf("browser control must ship on the official channel: browser=%v tools=%d", a.browser != nil, len(a.browserTools("owner")))
 	}
-	if st := a.GetBrowserState("owner"); st.Supported || st.Error == "" {
-		t.Fatal(st)
+	if st := a.GetBrowserState("owner"); st.Supported {
+		t.Fatal("an unregistered owner must still report unsupported")
 	}
 }

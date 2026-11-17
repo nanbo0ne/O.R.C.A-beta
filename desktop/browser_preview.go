@@ -14,7 +14,16 @@ const (
 	browserPreviewTitle       = "O.R.C.A. Browser Preview"
 )
 
+// browserPreviewEnabled gates the isolated preview identity: its own window
+// class, single-instance lock, title and profile root. It must stay false on
+// the official channel, which keeps the public window class and update path.
 func browserPreviewEnabled() bool { return channel == browserPreviewChannel || betaEnabled() }
+
+// browserControlEnabled gates the browser feature itself. Browser control has
+// shipped to the official channel, so the capability is no longer tied to the
+// preview or beta identity. Every feature gate must use this predicate, never
+// the identity predicate above, or a stable build loses the panel and tools.
+func browserControlEnabled() bool { return channel != "" }
 
 // isolateBrowserPreview must run before constructing App or consulting config.
 func isolateBrowserPreview() error {

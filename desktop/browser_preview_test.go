@@ -100,3 +100,28 @@ func TestBrowserPreviewIdentityOnlyOnPreviewChannel(t *testing.T) {
 		t.Fatalf("stable lock identity = %#v, want %q", stableLock, singleInstanceID)
 	}
 }
+
+func TestBrowserControlShipsOnOfficialChannel(t *testing.T) {
+	for _, tc := range []struct {
+		channel string
+		want    bool
+	}{
+		{"stable", true},
+		{"canary", true},
+		{browserPreviewChannel, true},
+		{betaChannel, true},
+		{"", false},
+	} {
+		old := channel
+		channel = tc.channel
+		got := browserControlEnabled()
+		identity := browserPreviewEnabled()
+		channel = old
+		if got != tc.want {
+			t.Fatalf("browserControlEnabled(%q) = %v, want %v", tc.channel, got, tc.want)
+		}
+		if tc.channel == "stable" && identity {
+			t.Fatal("official channel must not adopt the preview identity")
+		}
+	}
+}

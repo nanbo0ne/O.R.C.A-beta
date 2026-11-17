@@ -36,7 +36,7 @@ type browserTool struct {
 }
 
 func (a *App) browserTools(owner string) []tool.Tool {
-	if !browserPreviewEnabled() || runtime.GOOS != "windows" {
+	if !browserControlEnabled() || runtime.GOOS != "windows" {
 		return nil
 	}
 	return []tool.Tool{browserTool{a, owner, "task"}, browserTool{a, owner, "status"}, browserTool{a, owner, "stop"}}
