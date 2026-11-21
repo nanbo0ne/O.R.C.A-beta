@@ -153,7 +153,7 @@ func TestReleaseWorkflowRepackagesSignedPortablePayload(t *testing.T) {
 	}
 }
 
-func TestInstallerAcceptanceUsesPublished312Baseline(t *testing.T) {
+func TestInstallerAcceptanceUsesPinnedPublishedBaseline(t *testing.T) {
 	body, err := os.ReadFile("../scripts/test-desktop-installer.ps1")
 	if err != nil {
 		t.Fatal(err)
@@ -163,11 +163,16 @@ func TestInstallerAcceptanceUsesPublished312Baseline(t *testing.T) {
 		"$ExpectedVersion = '3.0.13'",
 		"$assetName = 'O.R.C.A-for-Windows-windows-amd64-installer.exe'",
 		"[version]$productVersion -le [version]'3.0.12'",
-		"releases/tags/desktop-v3.0.12",
-		"Assert-Installation $upgradeDir '3.0.12' 'installed-312'",
+		"if ([version]$productVersion -gt [version]'3.0.13')",
+		"$baselineVersion = '3.0.13'",
+		"$baselineVersion = '3.0.12'",
+		"releases/tags/$baselineTag",
+		"Assert-Installation $upgradeDir $baselineVersion 'installed-baseline'",
 		"'SHA256SUMS.txt'",
 		"$pinnedOldSize = 91212149",
+		"$pinnedOldSize = 91264104",
 		"3bdc8cbd0ae418684829526afc2650b9d870a392002a29b345df5cefb7d95b1b",
+		"fccc37703c215351ac736af1adb1a15c9980b657da3aad662fcc6042da66b8e6",
 		"$oldHash -ine $checksumRows[0].Groups[1].Value -or $oldHash -cne $pinnedOldHash",
 	} {
 		if !strings.Contains(script, want) {
@@ -187,10 +192,8 @@ func TestInstallerAcceptanceUsesPublished312Baseline(t *testing.T) {
 	}
 	workflow := readDesktopReleaseWorkflow(t)
 	for _, want := range []string{
-		"# Published upgrade baseline: desktop-v3.0.12.",
-		"# Asset: O.R.C.A-for-Windows-windows-amd64-installer.exe",
-		"# Size: 91212149 bytes",
-		"# SHA256: 3bdc8cbd0ae418684829526afc2650b9d870a392002a29b345df5cefb7d95b1b",
+		"# Published upgrade baseline for 3.0.14 and later: desktop-v3.0.13.",
+		"# Rebuilding 3.0.13 still uses desktop-v3.0.12.",
 		`"$seven_zip" t dist/O.R.C.A-for-Windows-windows-amd64-installer.exe`,
 	} {
 		if !strings.Contains(workflow, want) {
